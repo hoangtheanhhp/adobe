@@ -126,3 +126,4 @@ dmypy.json
 sample_submission.csv
 test.csv
 train.csv
+GoogleNews-vectors-negative300.bin.gz

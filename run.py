@@ -1,27 +1,18 @@
-import pandas as pd
-import numpy as np
 import gensim
-from fuzzywuzzy import fuzz
 import nltk
+import numpy as np
+import pandas as pd
+from fuzzywuzzy import fuzz
+from nltk import word_tokenize
 from nltk.corpus import stopwords
-from tqdm import tqdm_notebook
-from nltk import word_tokenize
-from scipy.stats import skew, kurtosis
 from scipy.spatial.distance import cosine, cityblock, jaccard, canberra, euclidean, minkowski, braycurtis
-from nltk import word_tokenize
+from scipy.stats import skew, kurtosis
+from tqdm import tqdm_notebook
 
 stop_words = nltk.download('stopwords')
 
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.decomposition import PCA
-from sklearn.metrics import classification_report
-from sklearn.metrics import confusion_matrix
-from sklearn.metrics import accuracy_score
-
 df = pd.read_table('QQP/dev.tsv')
 df = df.dropna(how="any").reset_index(drop=True)
-stopwords = set(stopwords.words('english'))
 a = 0
 for i in range(a, a + 10):
     print(df.question1[i])
@@ -85,14 +76,12 @@ df['fuzz_token_set_ratio'] = df.apply(lambda x: fuzz.token_set_ratio(str(x['ques
 df['fuzz_token_sort_ratio'] = df.apply(lambda x: fuzz.token_sort_ratio(str(x['question1']), str(x['question2'])),
                                        axis=1)
 df.head(2)
-model = gensim.models.KeyedVectors.load_word2vec_format('./word2Vec_models/GoogleNews-vectors-negative300.bin.gz',
-                                                        binary=True)
+model = gensim.models.KeyedVectors.load_word2vec_format('GoogleNews-vectors-negative300.bin.gz', binary=True)
 df['wmd'] = df.apply(lambda x: wmd(x['question1'], x['question2']), axis=1)
 
 df.head(2)
 
-norm_model = gensim.models.KeyedVectors.load_word2vec_format('./word2Vec_models/GoogleNews-vectors-negative300.bin.gz',
-                                                             binary=True)
+norm_model = gensim.models.KeyedVectors.load_word2vec_format('GoogleNews-vectors-negative300.bin.gz', binary=True)
 norm_model.init_sims(replace=True)
 df['norm_wmd'] = df.apply(lambda x: norm_wmd(x['question1'], x['question2']), axis=1)
 
